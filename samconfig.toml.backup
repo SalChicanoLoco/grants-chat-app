@@ -1,0 +1,41 @@
+version = 0.1
+
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "grants-chat-backend"
+s3_prefix = "grants-chat-backend"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=\"prod\""
+confirm_changeset = true
+fail_on_empty_changeset = false
+resolve_s3 = true
+disable_rollback = true
+image_repositories = []
+
+[default.build]
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate]
+[default.validate.parameters]
+lint = true
+
+[default.local_invoke]
+[default.local_invoke.parameters]
+event = "events/test-event.json"
+
+
+[default.global.parameters]
+region = "us-east-2"
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "grants-chat-backend-dev"
+s3_prefix = "grants-chat-backend-dev"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=dev"
+confirm_changeset = false
+fail_on_empty_changeset = false

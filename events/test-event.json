@@ -1,0 +1,35 @@
+{
+  "body": "{\"message\": \"Hello, can you help me with grant writing?\"}",
+  "resource": "/chat",
+  "path": "/chat",
+  "httpMethod": "POST",
+  "isBase64Encoded": false,
+  "queryStringParameters": null,
+  "multiValueQueryStringParameters": null,
+  "pathParameters": null,
+  "stageVariables": null,
+  "headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "Host": "localhost:8000",
+    "User-Agent": "curl/7.68.0"
+  },
+  "multiValueHeaders": {
+    "Accept": ["application/json"],
+    "Content-Type": ["application/json"]
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "1234567890",
+    "protocol": "HTTP/1.1",
+    "httpMethod": "POST",
+    "path": "/chat",
+    "stage": "prod",
+    "requestId": "test-request-id",
+    "requestTime": "24/Jan/2024:16:00:00 +0000",
+    "requestTimeEpoch": 1706112000000,
+    "identity": {
+      "sourceIp": "127.0.0.1"
+    }
+  }
+}
