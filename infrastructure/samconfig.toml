@@ -1,0 +1,13 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "grants-chat-backend"
+resolve_s3 = true
+s3_prefix = "grants-chat-backend"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=\"prod\""
+image_repositories = []
+
+[default.global.parameters]
+region = "us-east-2"
