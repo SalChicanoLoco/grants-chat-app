@@ -4,7 +4,7 @@ version = 0.1
 stack_name = "grants-chat-backend"
 resolve_s3 = true
 s3_prefix = "grants-chat-backend"
-confirm_changeset = true
+confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"prod\""
 image_repositories = []

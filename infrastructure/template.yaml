@@ -15,7 +15,7 @@ Globals:
   Function:
     Timeout: 30
     MemorySize: 128
-    Runtime: python3.11
+    Runtime: python3.13
     Architectures:
       - arm64
 
@@ -59,9 +59,15 @@ Resources:
         Variables:
           CONVERSATIONS_TABLE: !Ref ConversationsTable
           ENVIRONMENT: !Ref Environment
+          ANTHROPIC_API_KEY_PARAM: /prod/anthropic-api-key
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ConversationsTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter
+              Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/prod/anthropic-api-key'
       Events:
         ChatApi:
           Type: Api

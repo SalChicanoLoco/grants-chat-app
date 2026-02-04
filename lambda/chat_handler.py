@@ -4,11 +4,38 @@ import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 import uuid
+from anthropic import Anthropic
 
-# Initialize DynamoDB client
+# Initialize clients
 dynamodb = boto3.resource('dynamodb')
+ssm = boto3.client('ssm')
 table_name = os.environ.get('CONVERSATIONS_TABLE', 'GrantsConversations')
 table = dynamodb.Table(table_name)
+
+# Global cache for Anthropic client
+_anthropic_client = None
+
+def get_anthropic_client():
+    """
+    Get or create cached Anthropic client with API key from SSM Parameter Store
+    """
+    global _anthropic_client
+    
+    if _anthropic_client is None:
+        try:
+            # Get API key from SSM Parameter Store
+            param_name = os.environ.get('ANTHROPIC_API_KEY_PARAM', '/prod/anthropic-api-key')
+            response = ssm.get_parameter(Name=param_name, WithDecryption=True)
+            api_key = response['Parameter']['Value']
+            
+            # Initialize Anthropic client
+            _anthropic_client = Anthropic(api_key=api_key)
+            print("Anthropic client initialized successfully")
+        except Exception as e:
+            print(f"Error initializing Anthropic client: {str(e)}")
+            raise
+    
+    return _anthropic_client
 
 def lambda_handler(event, context):
     """
@@ -79,8 +106,39 @@ def store_message(conversation_id, sender, message, timestamp):
 
 def generate_response(user_message):
     """
-    Generate AI response based on user message
-    TODO: Replace with actual AI/LLM integration (OpenAI, Bedrock, etc.)
+    Generate AI response using Anthropic API
+    """
+    try:
+        # Get Anthropic client
+        client = get_anthropic_client()
+        
+        # Create message using Anthropic API
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1024,
+            messages=[
+                {
+                    "role": "user",
+                    "content": user_message
+                }
+            ],
+            system="You are a helpful assistant specialized in grant writing and applications. Help users with proposal structure, budgets, timelines, and all aspects of grant development."
+        )
+        
+        # Extract text from response
+        if response.content and len(response.content) > 0:
+            return response.content[0].text
+        else:
+            raise Exception("Empty response from Anthropic API")
+            
+    except Exception as e:
+        print(f"Error calling Anthropic API: {str(e)}")
+        # Fallback to simple pattern matching
+        return generate_fallback_response(user_message)
+
+def generate_fallback_response(user_message):
+    """
+    Fallback response using simple pattern matching if API fails
     """
     message_lower = user_message.lower()
     
